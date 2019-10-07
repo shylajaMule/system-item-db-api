@@ -1,0 +1,57 @@
+#%RAML 1.0
+baseUri: https://anypoint.mulesoft.com/mocking/api/v1/links/0136de12-f664-4016-bd7a-a7f0bcb7a8d4/ # 
+title: system-item-db-api
+mediaType:
+  - application/json
+version: 1.0.0
+protocols:
+  - HTTP
+
+types:
+  itemResponseType: !include type/itemResponse.raml
+  errorResponse: !include type/errorResponseType.raml
+
+traits: 
+ logging: !include traits/logging-traits.raml
+ clientId-enforcement: !include traits/security.raml
+  
+
+/items/{item-id}:
+  uriParameters:
+    item-id:
+      description: unique Item Id to trigger the operation
+      example: 1
+      type: number
+      format: int
+  get:
+    displayName: Returns a item details
+    description: get result of item corresponding to itemId
+    is: [logging, clientId-enforcement]
+    responses:
+      200:
+        body:
+          application/json:
+            type: itemResponseType
+            example: !include example/itemResponseExample.raml
+      400:
+        description: "Bad Request"
+        body:
+          appication/json:
+            type: "errorResponse"
+      401:
+        description: "Unauthorized"
+        body:
+          appication/json:
+            type: "errorResponse"
+      404:
+        description: "Not Found"
+        body:
+          appication/json:
+            type: "errorResponse"
+      500:
+        description: "Internal Server Error"
+        body:
+          appication/json:
+            type: "errorResponse"
+              
+  
